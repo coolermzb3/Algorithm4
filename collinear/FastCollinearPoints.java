@@ -27,7 +27,27 @@ public class FastCollinearPoints {
             }
         }
 
-        Arrays.sort(points, Point.slopeOrder(points[0]));
+        for (int i = 0; i < n; i++) {
+
+            int continuousEqualCount = 0;
+
+            Arrays.sort(points, Point.slopeOrder(points[i]));
+            for (int j = 1; j < n - 1; j++) {
+                // only first is self, j start from 1
+                if (points[j].compareTo(points[j + 1]) == 0) {
+                    continuousEqualCount++;
+                }
+                else {
+
+                    // TODO
+                    if (continuousEqualCount < 3) {
+                        continue;
+                    }
+
+                    continuousEqualCount = 0;
+                }
+            }
+        }
 
 
     }
@@ -43,6 +63,13 @@ public class FastCollinearPoints {
     }
 
     public static void main(String[] args) {
+        Integer[] a = new Integer[10];
+        for (int i = 0; i < a.length; i++) {
+            a[i] = i;
+        }
+        Arrays.sort(a);
+        System.out.println("a = " + Arrays.toString(a));
+
 
     }
 }
