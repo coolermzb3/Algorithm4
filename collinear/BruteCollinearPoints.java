@@ -4,12 +4,10 @@
  *  Description:
  **************************************************************************** */
 
-import java.util.ArrayList;
-
 public class BruteCollinearPoints {
 
     private int numberOfSegments;
-    private ArrayList<LineSegment> segments;
+    private LineSegment[] segments;
 
     // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] points) {
@@ -33,7 +31,7 @@ public class BruteCollinearPoints {
         Point[] p4 = new Point[4];
         Point minPoint;
         Point maxPoint;
-        segments = new ArrayList<>();
+        segments = new LineSegment[1];
         numberOfSegments = 0;
 
         for (int p = 0; p < n; p++) {
@@ -47,7 +45,6 @@ public class BruteCollinearPoints {
 
                         if (p4[0].slopeTo(p4[1]) == p4[0].slopeTo(p4[2])
                                 && p4[0].slopeTo(p4[1]) == p4[0].slopeTo(p4[3])) {
-                            numberOfSegments++;
                             minPoint = p4[0];
                             maxPoint = p4[0];
                             for (int i = 1; i < 4; i++) {
@@ -58,13 +55,24 @@ public class BruteCollinearPoints {
                                     maxPoint = p4[i];
                                 }
                             }
-                            segments.add(new LineSegment(minPoint, maxPoint));
+                            if (numberOfSegments == segments.length) {
+                                resize(2 * segments.length);
+                            }
+                            segments[numberOfSegments++] = new LineSegment(minPoint, maxPoint);
                         }
                     }
                 }
             }
         }
 
+    }
+    
+    private void resize(int capacity) {
+        LineSegment[] copy = new LineSegment[capacity];
+        for (int i = 0; i < numberOfSegments; i++) {
+            copy[i] = segments[i];
+        }
+        segments = copy;
     }
 
     // the number of line segments
