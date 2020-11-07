@@ -4,10 +4,11 @@
  *  Description:
  **************************************************************************** */
 
+import java.util.ArrayList;
+
 public class BruteCollinearPoints {
 
     private int numberOfSegments;
-    private LineSegment[] resizingSegments;
     private LineSegment[] segments;
 
     // finds all line segments containing 4 points
@@ -21,7 +22,6 @@ public class BruteCollinearPoints {
                 throw new IllegalArgumentException("point array has null element");
             }
         }
-
         for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n; j++) {
                 if (points[i].compareTo(points[j]) == 0) {
@@ -33,7 +33,7 @@ public class BruteCollinearPoints {
         Point[] p4 = new Point[4];
         Point minPoint;
         Point maxPoint;
-        this.resizingSegments = new LineSegment[1];
+        ArrayList<LineSegment> segmentList = new ArrayList<>();
         this.numberOfSegments = 0;
 
         for (int p = 0; p < n; p++) {
@@ -57,12 +57,8 @@ public class BruteCollinearPoints {
                                     maxPoint = p4[i];
                                 }
                             }
-                            if (this.numberOfSegments == this.resizingSegments.length) {
-                                resize(2 * this.resizingSegments.length);
-                            }
-                            this.resizingSegments[this.numberOfSegments++] = new LineSegment(
-                                    minPoint,
-                                    maxPoint);
+                            segmentList.add(new LineSegment(minPoint, maxPoint));
+                            numberOfSegments++;
                         }
                     }
                 }
@@ -71,17 +67,8 @@ public class BruteCollinearPoints {
 
         segments = new LineSegment[numberOfSegments];
         for (int i = 0; i < numberOfSegments; i++) {
-            segments[i] = resizingSegments[i];
+            segments[i] = segmentList.get(i);
         }
-
-    }
-
-    private void resize(int capacity) {
-        LineSegment[] copy = new LineSegment[capacity];
-        for (int i = 0; i < numberOfSegments; i++) {
-            copy[i] = this.resizingSegments[i];
-        }
-        this.resizingSegments = copy;
     }
 
     // the number of line segments
