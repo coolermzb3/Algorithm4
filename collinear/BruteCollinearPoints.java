@@ -43,7 +43,9 @@ public class BruteCollinearPoints {
                         if (p4[0].slopeTo(p4[1]) == p4[0].slopeTo(p4[2])
                                 && p4[0].slopeTo(p4[1]) == p4[0].slopeTo(p4[3])) {
                             numberOfSegments++;
-
+                            System.out.println("some new thing");
+                            System.out.println("another");
+                            
 
                         }
 
