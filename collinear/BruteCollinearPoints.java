@@ -20,6 +20,7 @@ public class BruteCollinearPoints {
                 throw new IllegalArgumentException("point array has null element");
             }
         }
+
         for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n; j++) {
                 if (points[i].compareTo(points[j]) == 0) {
@@ -31,8 +32,8 @@ public class BruteCollinearPoints {
         Point[] p4 = new Point[4];
         Point minPoint;
         Point maxPoint;
-        segments = new LineSegment[1];
-        numberOfSegments = 0;
+        this.segments = new LineSegment[1];
+        this.numberOfSegments = 0;
 
         for (int p = 0; p < n; p++) {
             for (int q = p + 1; q < n; q++) {
@@ -55,37 +56,44 @@ public class BruteCollinearPoints {
                                     maxPoint = p4[i];
                                 }
                             }
-                            if (numberOfSegments == segments.length) {
-                                resize(2 * segments.length);
+                            if (this.numberOfSegments == this.segments.length) {
+                                resize(2 * this.segments.length);
                             }
-                            segments[numberOfSegments++] = new LineSegment(minPoint, maxPoint);
+                            this.segments[this.numberOfSegments++] = new LineSegment(minPoint,
+                                                                                     maxPoint);
                         }
                     }
                 }
             }
         }
-
     }
-    
+
     private void resize(int capacity) {
         LineSegment[] copy = new LineSegment[capacity];
         for (int i = 0; i < numberOfSegments; i++) {
-            copy[i] = segments[i];
+            copy[i] = this.segments[i];
         }
-        segments = copy;
+        this.segments = copy;
     }
 
     // the number of line segments
     public int numberOfSegments() {
-        return numberOfSegments;
+        return this.numberOfSegments;
     }
 
     // the line segments
     public LineSegment[] segments() {
-        return segments;
+        return this.segments.clone();
     }
 
     public static void main(String[] args) {
-
+        int[] a = new int[3];
+        int n = a.length;
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                System.out.println("count = " + count++);
+            }
+        }
     }
 }
