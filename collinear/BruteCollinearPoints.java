@@ -7,6 +7,7 @@
 public class BruteCollinearPoints {
 
     private int numberOfSegments;
+    private LineSegment[] resizingSegments;
     private LineSegment[] segments;
 
     // finds all line segments containing 4 points
@@ -32,7 +33,7 @@ public class BruteCollinearPoints {
         Point[] p4 = new Point[4];
         Point minPoint;
         Point maxPoint;
-        this.segments = new LineSegment[1];
+        this.resizingSegments = new LineSegment[1];
         this.numberOfSegments = 0;
 
         for (int p = 0; p < n; p++) {
@@ -56,24 +57,31 @@ public class BruteCollinearPoints {
                                     maxPoint = p4[i];
                                 }
                             }
-                            if (this.numberOfSegments == this.segments.length) {
-                                resize(2 * this.segments.length);
+                            if (this.numberOfSegments == this.resizingSegments.length) {
+                                resize(2 * this.resizingSegments.length);
                             }
-                            this.segments[this.numberOfSegments++] = new LineSegment(minPoint,
-                                                                                     maxPoint);
+                            this.resizingSegments[this.numberOfSegments++] = new LineSegment(
+                                    minPoint,
+                                    maxPoint);
                         }
                     }
                 }
             }
         }
+
+        segments = new LineSegment[numberOfSegments];
+        for (int i = 0; i < numberOfSegments; i++) {
+            segments[i] = resizingSegments[i];
+        }
+
     }
 
     private void resize(int capacity) {
         LineSegment[] copy = new LineSegment[capacity];
         for (int i = 0; i < numberOfSegments; i++) {
-            copy[i] = this.segments[i];
+            copy[i] = this.resizingSegments[i];
         }
-        this.segments = copy;
+        this.resizingSegments = copy;
     }
 
     // the number of line segments
