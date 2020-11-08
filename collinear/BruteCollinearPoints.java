@@ -4,7 +4,7 @@
  *  Description:
  **************************************************************************** */
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class BruteCollinearPoints {
 
@@ -33,7 +33,7 @@ public class BruteCollinearPoints {
         Point[] p4 = new Point[4];
         Point minPoint;
         Point maxPoint;
-        ArrayList<LineSegment> segmentList = new ArrayList<>();
+        LinkedList<LineSegment> segmentLinkedList = new LinkedList<>();
         this.numberOfSegments = 0;
 
         for (int p = 0; p < n; p++) {
@@ -57,7 +57,7 @@ public class BruteCollinearPoints {
                                     maxPoint = p4[i];
                                 }
                             }
-                            segmentList.add(new LineSegment(minPoint, maxPoint));
+                            segmentLinkedList.add(new LineSegment(minPoint, maxPoint));
                             numberOfSegments++;
                         }
                     }
@@ -66,9 +66,11 @@ public class BruteCollinearPoints {
         }
 
         segments = new LineSegment[numberOfSegments];
-        for (int i = 0; i < numberOfSegments; i++) {
-            segments[i] = segmentList.get(i);
+        int i = 0;
+        for (LineSegment lineSegment : segmentLinkedList) {
+            segments[i++] = lineSegment;
         }
+
     }
 
     // the number of line segments

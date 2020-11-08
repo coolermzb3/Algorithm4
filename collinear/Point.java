@@ -16,6 +16,8 @@ public class Point implements Comparable<Point> {
 
     private final int x;     // x-coordinate of this point
     private final int y;     // y-coordinate of this point
+    private double slope;
+
 
     /**
      * Initializes a new point.
@@ -79,6 +81,14 @@ public class Point implements Comparable<Point> {
         }
     }
 
+    public double getSlope() {
+        return this.slope;
+    }
+
+    public void setSlope(Point that) {
+        this.slope = this.slopeTo(that);
+    }
+
     /**
      * Compares two points by y-coordinate, breaking ties by x-coordinate.
      * Formally, the invoking point (x0, y0) is less than the argument point
@@ -100,15 +110,7 @@ public class Point implements Comparable<Point> {
             return 1;
         }
         else {
-            if (this.x < that.x) {
-                return -1;
-            }
-            else if (this.x > that.x) {
-                return 1;
-            }
-            else {
-                return 0;
-            }
+            return Integer.compare(this.x, that.x);
         }
     }
 
@@ -118,32 +120,17 @@ public class Point implements Comparable<Point> {
      *
      * @return the Comparator that defines this ordering on points
      */
-    public static Comparator<Point> slopeOrder(Point point) {
+    public static Comparator<Point> slopeOrder() {
         /* YOUR CODE HERE */
-        return new SlopeOrder(point);
+        return new SlopeOrder();
     }
 
     private static class SlopeOrder implements Comparator<Point> {
 
-        private Point point;
-
-        private SlopeOrder(Point point) {
-            this.point = point;
-        }
-
         public int compare(Point o1, Point o2) {
-            double s1 = this.point.slopeTo(o1);
-            double s2 = this.point.slopeTo(o2);
-            if (s1 < s2) {
-                return -1;
-            }
-            else if (s1 > s2) {
-                return 1;
-            }
-            else {
-                return 0;
-            }
+            return Double.compare(o1.getSlope(), o2.getSlope());
         }
+
     }
 
     /**
