@@ -16,8 +16,6 @@ public class Point implements Comparable<Point> {
 
     private final int x;     // x-coordinate of this point
     private final int y;     // y-coordinate of this point
-    private double slope;
-
 
     /**
      * Initializes a new point.
@@ -81,14 +79,6 @@ public class Point implements Comparable<Point> {
         }
     }
 
-    public double getSlope() {
-        return this.slope;
-    }
-
-    public void setSlope(Point that) {
-        this.slope = this.slopeTo(that);
-    }
-
     /**
      * Compares two points by y-coordinate, breaking ties by x-coordinate.
      * Formally, the invoking point (x0, y0) is less than the argument point
@@ -120,15 +110,15 @@ public class Point implements Comparable<Point> {
      *
      * @return the Comparator that defines this ordering on points
      */
-    public static Comparator<Point> slopeOrder() {
+    public Comparator<Point> slopeOrder() {
         /* YOUR CODE HERE */
         return new SlopeOrder();
     }
 
-    private static class SlopeOrder implements Comparator<Point> {
+    private class SlopeOrder implements Comparator<Point> {
 
         public int compare(Point o1, Point o2) {
-            return Double.compare(o1.getSlope(), o2.getSlope());
+            return Double.compare(slopeTo(o1), slopeTo(o2));
         }
 
     }

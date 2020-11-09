@@ -39,13 +39,10 @@ public class FastCollinearPoints {
         this.numberOfSegments = 0;
 
         for (int i = 0; i < n; i++) {
-            // calculate slope with this point for all points and sort by slope order
+            // sort by slope order using this point's comparator
             // !!! using index in array with many sort cause BUGs!!!
             // use a copy array for index!!
-            for (int j = 0; j < n; j++) {
-                points[j].setSlope(pointsCopy[i]);
-            }
-            Arrays.sort(points, Point.slopeOrder());
+            Arrays.sort(points, pointsCopy[i].slopeOrder());
 
             // check continuous four collinear points
             int continuousEqualCount = 0;
@@ -58,7 +55,7 @@ public class FastCollinearPoints {
                  * the condition in for should have been j >= 0, but we
                  * will use j-1, so it is j > 0
                  */
-                if (points[j].getSlope() == points[j - 1].getSlope()) {
+                if (pointsCopy[i].slopeTo(points[j]) == pointsCopy[i].slopeTo(points[j - 1])) {
                     continuousEqualCount++;
                 }
                 else {
