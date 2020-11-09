@@ -10,7 +10,7 @@ import java.util.LinkedList;
 public class FastCollinearPoints {
 
     private int numberOfSegments;
-    private LineSegment[] segments;
+    private final LineSegment[] segments;
 
     // finds all line segments containing 4 or more points
     public FastCollinearPoints(Point[] points) {
@@ -34,8 +34,8 @@ public class FastCollinearPoints {
 
         Point minPoint;
         Point maxPoint;
-        LinkedList<Point[]> startAndEndPoints = new LinkedList<>();
-        boolean repeated;
+        LinkedList<LineSegment> segmentLinkedList = new LinkedList<>();
+
         this.numberOfSegments = 0;
 
         for (int i = 0; i < n; i++) {
@@ -73,15 +73,11 @@ public class FastCollinearPoints {
                                 maxPoint = pointsCopy[k];
                             }
                         }
-                        // check if contains
-                        repeated = false;
-                        for (Point[] ps : startAndEndPoints) {
-                            if (ps[0].compareTo(minPoint) == 0 && ps[1].compareTo(maxPoint) == 0) {
-                                repeated = true;
-                            }
-                        }
-                        if (!repeated) {
-                            startAndEndPoints.add(new Point[] { minPoint, maxPoint });
+                        // don't check if contains in loop... check it later
+                        // update: check now! Why can't I think of it!!!
+                        if (minPoint.compareTo(pointsCopy[0]) == 0) {
+                            // add in to segment only when point is min point (no repeat!!)
+                            segmentLinkedList.add(new LineSegment(minPoint, maxPoint));
                             numberOfSegments++;
                         }
                     }
@@ -89,16 +85,17 @@ public class FastCollinearPoints {
                 }
             }
         }
-        segments = new LineSegment[numberOfSegments];
+
+        this.segments = new LineSegment[numberOfSegments];
         int i = 0;
-        for (Point[] ps : startAndEndPoints) {
-            segments[i++] = new LineSegment(ps[0], ps[1]);
+        for (LineSegment ps : segmentLinkedList) {
+            this.segments[i++] = ps;
         }
     }
 
     // the number of line segments
     public int numberOfSegments() {
-        return numberOfSegments;
+        return this.numberOfSegments;
     }
 
     // the line segments
