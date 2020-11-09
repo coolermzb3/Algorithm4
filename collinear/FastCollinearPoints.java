@@ -24,14 +24,14 @@ public class FastCollinearPoints {
             }
         }
 
-        Arrays.sort(points);
+        Point[] pointsCopy = points.clone();
+        Arrays.sort(pointsCopy);
         for (int i = 1; i < n; i++) {
-            if (points[i].compareTo(points[i - 1]) == 0) {
+            if (pointsCopy[i].compareTo(pointsCopy[i - 1]) == 0) {
                 throw new IllegalArgumentException("point array has repeated point");
             }
         }
 
-        Point[] pointsCopy = points.clone();
         Point minPoint;
         Point maxPoint;
         LinkedList<Point[]> startAndEndPoints = new LinkedList<>();
@@ -42,7 +42,7 @@ public class FastCollinearPoints {
             // sort by slope order using this point's comparator
             // !!! using index in array with many sort cause BUGs!!!
             // use a copy array for index!!
-            Arrays.sort(points, pointsCopy[i].slopeOrder());
+            Arrays.sort(pointsCopy, points[i].slopeOrder());
 
             // check continuous four collinear points
             int continuousEqualCount = 0;
@@ -55,7 +55,7 @@ public class FastCollinearPoints {
                  * the condition in for should have been j >= 0, but we
                  * will use j-1, so it is j > 0
                  */
-                if (pointsCopy[i].slopeTo(points[j]) == pointsCopy[i].slopeTo(points[j - 1])) {
+                if (points[i].slopeTo(pointsCopy[j]) == points[i].slopeTo(pointsCopy[j - 1])) {
                     continuousEqualCount++;
                 }
                 else {
@@ -63,14 +63,14 @@ public class FastCollinearPoints {
                     // determine min and max point
                     if (continuousEqualCount >= 2) {
                         // the collinear points are: points[0], points[j ~ j+Count]
-                        minPoint = points[0];
-                        maxPoint = points[0];
+                        minPoint = pointsCopy[0];
+                        maxPoint = pointsCopy[0];
                         for (int k = j; k < j + continuousEqualCount + 1; k++) {
-                            if (points[k].compareTo(minPoint) < 0) {
-                                minPoint = points[k];
+                            if (pointsCopy[k].compareTo(minPoint) < 0) {
+                                minPoint = pointsCopy[k];
                             }
-                            if (points[k].compareTo(maxPoint) > 0) {
-                                maxPoint = points[k];
+                            if (pointsCopy[k].compareTo(maxPoint) > 0) {
+                                maxPoint = pointsCopy[k];
                             }
                         }
                         // check if contains
