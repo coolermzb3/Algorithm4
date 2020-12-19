@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class BaseFrame extends JFrame implements Runnable {
+public class BaseFrameScreen extends JFrame implements Runnable {
 
     private int w;
 
@@ -26,7 +26,7 @@ public class BaseFrame extends JFrame implements Runnable {
 
     private Graphics g;
 
-    public BaseFrame() {
+    public BaseFrameScreen() {
         init();
         this.setBounds(x, y, w, h);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -65,7 +65,7 @@ public class BaseFrame extends JFrame implements Runnable {
     }
 
     public static void main(String[] args) {
-        new BaseFrame();
+        new BaseFrameScreen();
     }
 
     public void run() {
