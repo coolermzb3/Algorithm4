@@ -1,12 +1,34 @@
 /* *****************************************************************************
  *  Name: Yu Zihong
- *  Date: 2020/11/16 14:13
+ *  Date: 2021/7/20 0:01
  *  Description:
  **************************************************************************** */
 
 public class Solver {
-    
-    public static void main(String[] args) {
+
+    // find a solution to the initial board (using the A* algorithm)
+    public Solver(Board initial) {
 
     }
+
+    // is the initial board solvable? (see below)
+    public boolean isSolvable() {
+        return true;
+    }
+
+    // min number of moves to solve initial board; -1 if unsolvable
+    public int moves() {
+        return 3;
+    }
+
+    // sequence of boards in a shortest solution; null if unsolvable
+    public Iterable<Board> solution() {
+        return null;
+    }
+
+    // test client (see below)
+    public static void main(String[] args) {
+        
+    }
+
 }
