@@ -10,8 +10,8 @@ import java.util.Arrays;
 
 public class Board {
 
-    private int[][] board;
-    private int n;
+    private final int[][] board;
+    private final int n;
 
     // private class for array index
     private final class Index {
@@ -28,6 +28,13 @@ public class Board {
         }
     }
 
+    // create a board from an n-by-n array of tiles,
+    // where tiles[row][col] = tile at (row, col)
+    public Board(int[][] tiles) {
+        n = tiles.length;
+        board = arrayCopy(tiles);
+    }
+
     // n-dimension array copy
     private int[][] arrayCopy(int[][] array) {
         int[][] copy = new int[n][n];
@@ -37,13 +44,6 @@ public class Board {
             }
         }
         return copy;
-    }
-
-    // create a board from an n-by-n array of tiles,
-    // where tiles[row][col] = tile at (row, col)
-    public Board(int[][] tiles) {
-        n = tiles.length;
-        board = arrayCopy(tiles);
     }
 
     // string representation of this board
@@ -79,17 +79,17 @@ public class Board {
 
     // sum of Manhattan distances between tiles and goal
     public int manhattan() {
-        int goal_i, goal_j, manhattan = 0;
+        int goalI, goalJ, manhattan = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 // eliminate the impact of 0
                 if (board[i][j] == 0) continue;
 
                 // goal position of num
-                goal_i = (board[i][j] - 1) / n;
-                goal_j = (board[i][j] - 1) % n;
+                goalI = (board[i][j] - 1) / n;
+                goalJ = (board[i][j] - 1) % n;
 
-                manhattan += Math.abs(goal_i - i) + Math.abs(goal_j - j);
+                manhattan += Math.abs(goalI - i) + Math.abs(goalJ - j);
             }
         }
         return manhattan;
