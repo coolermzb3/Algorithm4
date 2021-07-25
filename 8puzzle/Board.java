@@ -13,16 +13,37 @@ public class Board {
     private int[][] board;
     private int n;
 
+    // private class for array index
+    private final class Index {
+        private final int i;
+        private final int j;
+
+        public Index(int i, int j) {
+            this.i = i;
+            this.j = j;
+        }
+
+        public boolean isValid() {
+            return i >= 0 && i < n && j >= 0 && j < n;
+        }
+    }
+
+    // n-dimension array copy
+    private int[][] arrayCopy(int[][] array) {
+        int[][] copy = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                copy[i][j] = array[i][j];
+            }
+        }
+        return copy;
+    }
+
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
     public Board(int[][] tiles) {
         n = tiles.length;
-        board = new int[n][n];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                board[i][j] = tiles[i][j];
-            }
-        }
+        board = arrayCopy(tiles);
     }
 
     // string representation of this board
@@ -88,27 +109,74 @@ public class Board {
         return this.n == that.n && Arrays.deepEquals(this.board, that.board);
     }
 
+    // swap tiles
+    private Board swap(Index ori, Index des) {
+        int[][] copy = arrayCopy(board);
+        int temp = copy[ori.i][ori.j];
+        copy[ori.i][ori.j] = copy[des.i][des.j];
+        copy[des.i][des.j] = temp;
+        return new Board(copy);
+    }
+
     // all neighboring boards
     public Iterable<Board> neighbors() {
+        Index zero = null;
+        Index neighbor;
+
+        // find 0
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (board[i][j] == 0) {
+                    zero = new Index(i, j);
+                    break;
+                }
+            }
+        }
+        assert zero != null;
+
         Queue<Board> neighbors = new Queue<Board>();
-        
+
+        // check neighbor index validity
+        // up
+        neighbor = new Index(zero.i - 1, zero.j);
+        if (neighbor.isValid()) neighbors.enqueue(swap(zero, neighbor));
+        // down
+        neighbor = new Index(zero.i + 1, zero.j);
+        if (neighbor.isValid()) neighbors.enqueue(swap(zero, neighbor));
+        // left
+        neighbor = new Index(zero.i, zero.j - 1);
+        if (neighbor.isValid()) neighbors.enqueue(swap(zero, neighbor));
+        // right
+        neighbor = new Index(zero.i, zero.j + 1);
+        if (neighbor.isValid()) neighbors.enqueue(swap(zero, neighbor));
 
         return neighbors;
     }
 
     // a board that is obtained by exchanging any pair of tiles
     public Board twin() {
-        return null;
+        // (0,0) (0,n-1) (n-1,0) these three index must have two nonzero tiles
+        if (board[0][0] == 0)
+            return swap(new Index(0, n - 1), new Index(n - 1, 0));
+        else if (board[0][n - 1] == 0)
+            return swap(new Index(0, 0), new Index(n - 1, 0));
+        else
+            return swap(new Index(0, 0), new Index(0, n - 1));
     }
 
     // unit testing (not graded)
     public static void main(String[] args) {
-        int[][] tiles = { { 8, 1, 3 }, { 4, 0, 2 }, { 7, 6, 5 } };
+        int[][] tiles = { { 0, 1, 3 }, { 8, 4, 2 }, { 7, 6, 5 } };
         Board a = new Board(tiles);
-        System.out.println(a.hamming());
-        System.out.println(a.manhattan());
+        System.out.println(a.toString());
+        System.out.println("hamming distance: " + a.hamming());
+        System.out.println("manhattan distance: " + a.manhattan());
+        System.out.println("twin: \n" + a.twin().toString());
+        System.out.println("neighbors: \n");
+        for (Board b : a.neighbors()) {
+            System.out.println(b.toString());
+        }
 
     }
-
 
 }
