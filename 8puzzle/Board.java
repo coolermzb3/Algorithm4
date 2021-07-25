@@ -10,40 +10,28 @@ import java.util.Arrays;
 
 public class Board {
 
-    private final int[][] board;
+    private final int[] board;
     private final int n;
 
-    // private class for array index
-    private final class Index {
-        private final int i;
-        private final int j;
-
-        public Index(int i, int j) {
-            this.i = i;
-            this.j = j;
-        }
-
-        public boolean isValid() {
-            return i >= 0 && i < n && j >= 0 && j < n;
-        }
-    }
 
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
     public Board(int[][] tiles) {
         n = tiles.length;
-        board = arrayCopy(tiles);
-    }
 
-    // n-dimension array copy
-    private int[][] arrayCopy(int[][] array) {
-        int[][] copy = new int[n][n];
+        board = new int[n * n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                copy[i][j] = array[i][j];
+                board[i * n + j] = tiles[i][j];
             }
         }
-        return copy;
+    }
+
+    private Board(int n, int[] array1d) {
+        // private constructor
+        // array1d from `swap` has already been cloned
+        this.n = n;
+        this.board = array1d;
     }
 
     // string representation of this board
@@ -52,7 +40,7 @@ public class Board {
         s.append(n + "\n");
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                s.append(String.format("%2d ", board[i][j]));
+                s.append(String.format("%2d ", board[i * n + j]));
             }
             s.append("\n");
         }
@@ -67,11 +55,9 @@ public class Board {
     // number of tiles out of place
     public int hamming() {
         int hamming = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                // goal num of position (i,j) is i*n+j+1
-                if (board[i][j] != i * n + j + 1) hamming++;
-            }
+        for (int i = 0; i < board.length; i++) {
+            // goal num of position i is i+1
+            if (board[i] != i + 1) hamming++;
         }
         // eliminate the impact of 0
         return hamming - 1;
@@ -79,18 +65,20 @@ public class Board {
 
     // sum of Manhattan distances between tiles and goal
     public int manhattan() {
-        int goalI, goalJ, manhattan = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                // eliminate the impact of 0
-                if (board[i][j] == 0) continue;
-
-                // goal position of num
-                goalI = (board[i][j] - 1) / n;
-                goalJ = (board[i][j] - 1) % n;
-
-                manhattan += Math.abs(goalI - i) + Math.abs(goalJ - j);
-            }
+        int manhattan = 0;
+        int i1, j1, i2, j2;
+        for (int i = 0; i < board.length; i++) {
+            // skip 0
+            if (board[i] == 0) continue;
+            // skip right pos
+            if (board[i] == i + 1) continue;
+            // actual index is i
+            // goal index is board[i]-1
+            i1 = i / n;
+            j1 = i % n;
+            i2 = (board[i] - 1) / n;
+            j2 = (board[i] - 1) % n;
+            manhattan += Math.abs(i1 - i2) + Math.abs(j1 - j2);
         }
         return manhattan;
     }
@@ -106,67 +94,59 @@ public class Board {
         if (y == null) return false;
         if (y.getClass() != this.getClass()) return false;
         Board that = (Board) y;
-        return this.n == that.n && Arrays.deepEquals(this.board, that.board);
+        return this.n == that.n && Arrays.equals(this.board, that.board);
     }
 
     // swap tiles
-    private Board swap(Index ori, Index des) {
-        int[][] copy = arrayCopy(board);
-        int temp = copy[ori.i][ori.j];
-        copy[ori.i][ori.j] = copy[des.i][des.j];
-        copy[des.i][des.j] = temp;
-        return new Board(copy);
+    private Board swap(int ori, int des) {
+        int[] copy = board.clone();
+        int temp = copy[ori];
+        copy[ori] = copy[des];
+        copy[des] = temp;
+        return new Board(n, copy);
     }
 
     // all neighboring boards
     public Iterable<Board> neighbors() {
-        Index zero = null;
-        Index neighbor;
-
-        // find 0
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (board[i][j] == 0) {
-                    zero = new Index(i, j);
-                    break;
-                }
+        int zero = 0;
+        for (int i = 0; i < board.length; i++) {
+            if (board[i] == 0) {
+                zero = i;
+                break;
             }
         }
-        assert zero != null;
 
         Queue<Board> neighbors = new Queue<Board>();
 
         // check neighbor index validity
         // up
-        neighbor = new Index(zero.i - 1, zero.j);
-        if (neighbor.isValid()) neighbors.enqueue(swap(zero, neighbor));
+        if (zero >= n)
+            neighbors.enqueue(swap(zero, zero - n));
         // down
-        neighbor = new Index(zero.i + 1, zero.j);
-        if (neighbor.isValid()) neighbors.enqueue(swap(zero, neighbor));
+        if (zero < board.length - n)
+            neighbors.enqueue(swap(zero, zero + n));
         // left
-        neighbor = new Index(zero.i, zero.j - 1);
-        if (neighbor.isValid()) neighbors.enqueue(swap(zero, neighbor));
+        if (zero % n > 0) neighbors.enqueue(swap(zero, zero - 1));
         // right
-        neighbor = new Index(zero.i, zero.j + 1);
-        if (neighbor.isValid()) neighbors.enqueue(swap(zero, neighbor));
+        if (zero % n < n - 1) neighbors.enqueue(swap(zero, zero + 1));
 
         return neighbors;
     }
 
     // a board that is obtained by exchanging any pair of tiles
     public Board twin() {
-        // (0,0) (0,n-1) (n-1,0) these three index must have two nonzero tiles
-        if (board[0][0] == 0)
-            return swap(new Index(0, n - 1), new Index(n - 1, 0));
-        else if (board[0][n - 1] == 0)
-            return swap(new Index(0, 0), new Index(n - 1, 0));
+        // 0 1 2 these three index must have two nonzero tiles
+        if (board[0] == 0)
+            return swap(1, 2);
+        else if (board[1] == 0)
+            return swap(0, 2);
         else
-            return swap(new Index(0, 0), new Index(0, n - 1));
+            return swap(0, 1);
     }
 
     // unit testing (not graded)
     public static void main(String[] args) {
-        int[][] tiles = { { 0, 1, 3 }, { 8, 4, 2 }, { 7, 6, 5 } };
+        int[][] tiles = { { 8, 1, 3 }, { 4, 0, 2 }, { 7, 6, 5 } };
         Board a = new Board(tiles);
         System.out.println(a.toString());
         System.out.println("hamming distance: " + a.hamming());

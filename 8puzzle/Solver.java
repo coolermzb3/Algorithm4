@@ -19,13 +19,15 @@ public class Solver {
         private final int moves;
         private final SearchNode prev;
         private final int priority;
+        private final int distance;
 
         public SearchNode(Board board, int moves, SearchNode prev) {
             this.board = board;
             this.moves = moves;
             this.prev = prev;
+            this.distance = board.manhattan();
             // this.priority = board.hamming() + moves;
-            this.priority = board.manhattan() + moves;
+            this.priority = this.distance + moves;
         }
     }
 
@@ -71,7 +73,7 @@ public class Solver {
         if (curSelf.board.isGoal()) {
             isSolvable = true;
             goalNode = curSelf;
-            System.out.println("pqSelf.size() = " + pqSelf.size());
+            // System.out.println("pqSelf.size() = " + pqSelf.size());
         }
         else {
             isSolvable = false;
@@ -88,7 +90,9 @@ public class Solver {
 
     private class Prior implements Comparator<SearchNode> {
         public int compare(SearchNode n1, SearchNode n2) {
-            return Integer.compare(n1.priority, n2.priority);
+            if (n1.priority < n2.priority) return -1;
+            if (n1.priority > n2.priority) return 1;
+            else return Integer.compare(n1.distance, n2.distance);
         }
     }
 
